@@ -917,7 +917,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
             mt = "x " + str(round(edgethr * 0.5)) + " < 0 x ?"
             prewittm = core.std.Expr(prewittm, [mt] if GRAYS else [mt, ""])
             prewitt = core.rgvs.RemoveGrain(prewittm, [4] if GRAYS else [4, 0])
-            edgemask = core.generic.Hysteresis(prewitt, prewittm, [0])
+            edgemask = core.misc.Hysteresis(prewitt, prewittm, [0])
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
         
         # 1~6 are masks tweaked for Sharpening, -1~-7 are masks tweaked for AA.
