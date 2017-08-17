@@ -64,7 +64,16 @@ import vapoursynth as vs
 import havsfunc as haf
 import math
 
-def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=None, edgemask=None, edgethr=None, tcannysigma=None, showmask=None, mergesrc=None, ss_w=None, ss_h=None, ss_hq=None, nr=None, ssmethod=None, filter_ss=None, ssrep=None, ssout=None, preblur=None, prec=None, preR=None, usepasf=None, sspre=None, Smethod=None, kernel=None, secure=None, filter_nr=None, Smode=None, strength=None, divisor=None, index=None, Szrp=None, Spwr=None, SdmpLo=None, SdmpHi=None, Slimit=None, Tlimit=None, limitsrc=None, Sovershoot=None, Sundershoot=None, Tovershoot=None, Tundershoot=None, Soft=None, Soothe=None, limit=None, Repmode=None, RepmodeU=None, thr=None, thrc=None, chromamv=None, blksize=None, overlap=None, thSAD=300, thSCD1=300, thSCD2=100, truemotion=False, MVglobal=False, pel=None, pelsearch=None, search=None, searchparam=None, MVsharp=2, DCT=0):
+def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=None, edgemask=None,
+          edgethr=None, tcannysigma=None, showmask=None, mergesrc=None, ss_w=None, ss_h=None, ss_hq=None,
+		  nr=None, ssmethod=None, filter_ss=None, ssrep=None, ssout=None, preblur=None, prec=None, preR=None,
+		  usepasf=None, sspre=None, Smethod=None, kernel=None, secure=None, filter_nr=None, Smode=None, strength=None,
+		  divisor=None, index=None, Szrp=None, Spwr=None, SdmpLo=None, SdmpHi=None, Slimit=None, Tlimit=None,
+		  limitsrc=None, Sovershoot=None, Sundershoot=None, Tovershoot=None, Tundershoot=None, Soft=None,
+		  Soothe=None, limit=None, Repmode=None, RepmodeU=None, thr=None, thrc=None, chromamv=None, blksize=None,
+		  overlap=None, thSAD=300, thSCD1=300, thSCD2=100, truemotion=False, MVglobal=False, pel=None,
+		  pelsearch=None, search=None, searchparam=None, MVsharp=2, DCT=0):
+	
 	#get vs core
 	core = vs.get_core()
 	# format check
@@ -73,9 +82,9 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	sSType = filtered.format.sample_type
 	if sColorFamily == vs.YUV or sColorFamily == vs.GRAY:
 		if sSType != vs.INTEGER:
-			raise TypeError(funcname + ': \"filtered\" must be INTEGER format !')
+			raise TypeError('CSMOD: \"filtered\" must be INTEGER format !')
 	else:
-		raise TypeError(funcname + ': Only YUV colorfmaily is supported !')
+		raise TypeError('CSMOD: Only YUV colorfmaily is supported !')
 	# constant value
 	sw = filtered.width
 	sh = filtered.height
@@ -87,29 +96,23 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	else:
 		GRAYS = False
 		sGRAY = False
-	
-	
 		
 	#Showmask ?
 	if showmask is None:
 		showmask = False
 	
-	
-	
 	# define CALL , custom yourself
-	def CALL(func,clip):
+	def CALL(func, clip):
 		return func(clip)
-	
-	
 	
 	#generate default param
 	if source is not None and isinstance(source, vs.VideoNode):
 		defsrc = True
 		if (filtered.width != source.width or filtered.height != source.height):
-			raise TypeError('CSMOD:resolution of \"source\" and \"filtered\" must match !')
+			raise TypeError('CSMOD: resolution of \"source\" and \"filtered\" must match !')
 	else:
 		if source is not None:
-			raise TypeError('CSMOD:\"source\" is not a clip !')
+			raise TypeError('CSMOD: \"source\" is not a clip !')
 		else:
 			defsrc = False
 	
@@ -117,26 +120,22 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		defpclp = True
 	else:
 		if pclip is not None:
-			raise TypeError('CSMOD:\"pdclip\" is not a clip !')
+			raise TypeError('CSMOD: \"pdclip\" is not a clip !')
 		else:
 			defpclp = False
-	
-
-		
-	
 	
 	# custom filter ?
 	if type(filter_ss) == type(CALL):
 		deffss = True
 	elif filter_ss is not None:
-		raise TypeError('CSMOD:\"filter_ss\" is not a function !')
+		raise TypeError('CSMOD: \"filter_ss\" is not a function !')
 	else:
 		deffss = False
 	
 	if type(filter_nr) == type(CALL):
 		deffnr = True
 	elif filter_nr is not None:
-		raise TypeError('CSMOD:\"filter_nr\" is not a function !')
+		raise TypeError('CSMOD: \"filter_nr\" is not a function !')
 	else:
 		deffnr = False
 	
@@ -144,10 +143,9 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if limit is None:
 		limit = True
 	elif not isinstance(limit, bool):
-		raise TypeError('CSMOD:\"limit\" must be bool !')
+		raise TypeError('CSMOD: \"limit\" must be bool !')
 	if not (defsrc or deffss or usepasf or deffnr):
 		limit = False
-	
 	
 	# process chroma or not
 	if chroma is None or not isinstance(chroma, bool):
@@ -165,7 +163,6 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	else:
 		bs = 8
 		bs2 = 16
-	
 	
 	# presets
 	if preset is None:
@@ -197,7 +194,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		pnum = 9
 	else:
 		pnum = 10
-		raise TypeError('CSMOD:\"preset\" is invalid !')
+		raise TypeError('CSMOD: \"preset\" is invalid !')
 	
 			
 						  # preset = veryF faster  fast  medium  slow  slower veryS  noise  grain  detail 
@@ -266,8 +263,8 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if searchparam is None : searchparam = [1,     2,     2,     2,     2,     2,     2,     2,     2,     2][pnum]
 	if blksize	   is None : blksize	 = [bs2,  bs2,  bs2,   bs2,    bs,    bs,    bs,    bs,    bs,    bs][pnum]
 	
-	ol = round(blksize/2)
-	ol2 = round(blksize/4)
+	ol = round(blksize / 2)
+	ol2 = round(blksize / 4)
 	
 	if overlap	   is None : overlap	 = [ol2,  ol2,  ol2,   ol2,    ol,    ol,    ol,    ol,    ol,    ol][pnum]
 	
@@ -275,7 +272,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if type(ssmethod) == type(CALL):
 		defssmthd = True
 	elif ssmethod is not None:
-		raise TypeError('CSMOD:\"ssmethod\" is not a function !')
+		raise TypeError('CSMOD: \"ssmethod\" is not a function !')
 	else:
 		defssmthd = False
 	
@@ -283,20 +280,20 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if limitsrc is None:
 		limitsrc = False
 	elif not isinstance(limitsrc, bool):
-		raise TypeError('CSMOD:\"limitsrc\" must be bool !')
+		raise TypeError('CSMOD: \"limitsrc\" must be bool !')
 		
 	# edgemode
 	if not isinstance(edgemode, int):
-		raise TypeError('CSMOD:\"edgemode\" must be int !')
+		raise TypeError('CSMOD: \"edgemode\" must be int !')
 	elif edgemode < 0 or edgemode > 2:
-		raise TypeError('CSMOD:\"edgemode\" must be int(0~2) !')	
+		raise TypeError('CSMOD: \"edgemode\" must be int(0~2) !')	
 	# 0 = Sharpening all, 1 = Sharpening only edge, 2 = Sharpening only non-edge.
 	# By default, edgemode=2 is tuned for enhancing noise/small detail.
 	# It will automatically set [edgemask=-2, ss_w=1, ss_h=1, preblur=0, kernel=5, Slimit=false, Tlimit=true(when limit=false)].
 	
 	# edgemask
 	if not (isinstance(edgemask, int) or isinstance(edgemask, vs.VideoNode)):
-		raise TypeError('CSMOD:\"edgemask\" must be int or clip !')	
+		raise TypeError('CSMOD: \"edgemask\" must be int or clip !')	
 	#  1: Same as edgemaskHQ=False in LSFmod(min/max), 2: Same as edgemaskHQ=True in LSFmod,
 	#  3: Same as sharpening mask in MCTD(prewitt),    4: MSharpen mask,
 	#  5: tcanny mask(less sensitive to noise),        6: prewitt mask with mt_hysteresis(less sensitive to noise),
@@ -307,30 +304,30 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	# 1~6 are masks tweaked for Sharpening, -1~-7 are masks tweaked for AA.
 	# Otherwise define a custom edge mask clip, only luma is taken to merge all planes.
 	
-	if not (isinstance(edgethr,float) or isinstance(edgethr,int)):
-		raise TypeError('CSMOD:\"edgethr\" must be float !')
+	if not (isinstance(edgethr, float) or isinstance(edgethr, int)):
+		raise TypeError('CSMOD: \"edgethr\" must be float !')
 	# Tweak edge mask threshold EXCEPT edgemask mode -2/-1.
 	
 	if tcannysigma is None:
 		tcannysigma = 1.2
-	elif not (isinstance(tcannysigma,float) or isinstance(tcannysigma,int)):
-		raise TypeError('CSMOD:\"tcannysigma\" must be float !')
+	elif not (isinstance(tcannysigma, float) or isinstance(tcannysigma, int)):
+		raise TypeError('CSMOD: \"tcannysigma\" must be float !')
 	#Tweak tcanny's sigma in edgemask mode -7/-5/5.
 		
 	if mergesrc is None:
 		mergesrc = False
 	elif not isinstance(mergesrc, bool):
-		raise TypeError('CSMOD:\"mergesrc\" must be bool !')
+		raise TypeError('CSMOD: \"mergesrc\" must be bool !')
 	#Whether to merge clip "source" instead of clip "filtered" at the end of processing.
 		
-	if not (isinstance(ss_w,float) or isinstance(ss_w,int)):
-		raise TypeError('CSMOD:\"ss_w\" must be float !')
+	if not (isinstance(ss_w, float) or isinstance(ss_w, int)):
+		raise TypeError('CSMOD: \"ss_w\" must be float !')
 	elif ss_w < 1.00:
 		ss_w = 1.00
 	#Super sampling multiplier of width.
 
-	if not (isinstance(ss_h,float) or isinstance(ss_h,int)):
-		raise TypeError('CSMOD:\"ss_w\" must be float !')
+	if not (isinstance(ss_h, float) or isinstance(ss_h, int)):
+		raise TypeError('CSMOD: \"ss_w\" must be float !')
 	elif ss_h < 1.00:
 		ss_h = 1.00
 	#Super sampling multiplier of height.
@@ -338,7 +335,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if ss_hq is None:
 		ss_hq = 0
 	elif not isinstance(ss_hq, int):
-		raise TypeError('CSMOD:\"ss_hq\" must be int(0~2) !')
+		raise TypeError('CSMOD: \"ss_hq\" must be int(0~2) !')
 	#0 using non-ringing Spline64Resize when (ss_w*ss_h < 3.0625) otherwise using nnedi3 with pscrn=2.
 	#1 using nnedi3 in super sampling, but "pscrn" always sets to "1" (much slower but better quality)
 	#2 using nnedi3 in super sampling, but "pscrn" always sets to "2" (faster, in other words, depth will be dithered to 8bit when necessary)
@@ -346,32 +343,32 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if ssout is None:
 		ssout = False
 	elif not isinstance(ssout, bool):
-		raise TypeError('CSMOD:\"ssout\" must be bool !')
+		raise TypeError('CSMOD: \"ssout\" must be bool !')
 	if not (ss_w > 1.0 or ss_h > 1.0):
 		ssout = False
 	#Whether to output in super sampling resolution.
 	
 	# chroma ?
 	if not chroma and not sGRAY:
-		U = core.std.ShufflePlanes(filtered,1,vs.GRAY)
-		V = core.std.ShufflePlanes(filtered,2,vs.GRAY)
+		U = core.std.ShufflePlanes(filtered, 1, vs.GRAY)
+		V = core.std.ShufflePlanes(filtered, 2, vs.GRAY)
 			# TO DO NEXT
-		filtered = core.std.ShufflePlanes(filtered,0,vs.GRAY)
-		source = core.std.ShufflePlanes(source,0,vs.GRAY) if defsrc else source
-		pclip = core.std.ShufflePlanes(pclip,0,vs.GRAY) if defpclp else pclip
+		filtered = core.std.ShufflePlanes(filtered, 0, vs.GRAY)
+		source = core.std.ShufflePlanes(source, 0, vs.GRAY) if defsrc else source
+		pclip = core.std.ShufflePlanes(pclip, 0, vs.GRAY) if defpclp else pclip
 		GRAYS = True
 		sGRAY = False
 	
 	if ssrep is None:
 		ssrep = False
 	elif not isinstance(ssrep, bool):
-		raise TypeError('CSMOD:\"ssrep\" must be bool !')
+		raise TypeError('CSMOD: \"ssrep\" must be bool !')
 	if ssout:
 		ssrep = True
 	#When limiting sharpening to source clip, whether to Repair in super sampling resolution.
 
 	if not isinstance(preblur, int):
-		raise TypeError('CSMOD:\"preblur\" must be int !')
+		raise TypeError('CSMOD: \"preblur\" must be int !')
 	# Pre-filtering, 0 = disable, -1 = Gaussian Blur radius=1(RG11), -2 = Gaussian Blur radius=2(RG11+RG20),
 	# -3 = Gaussian Blur radius=3(RG11+RG20+RG20), -4 = Median Blur radius=1(RG4),
 	# -5 = Average Blur radius=1(RG20) -6 = (RG4+RG11), -7 = (RG19+RG4),
@@ -412,10 +409,10 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 			Smethod = 1
 	#Sharpen Method - 1: 3x3 kernel, 2: Min/Max, 3: Min/Max + 3x3 kernel.
 	
-	if not (isinstance(kernel, int) or type(kernel)==type(CALL)):
-		raise TypeError('CSMOD:\"kernel\" must be int or function !')
+	if not (isinstance(kernel, int) or type(kernel) == type(CALL)):
+		raise TypeError('CSMOD: \"kernel\" must be int or function !')
 	elif isinstance(kernel, int) and (kernel < 1 or kernel > 8):
-		raise ValueError('CSMOD:\"kernel\" is out of range [int(1~8)] !')
+		raise ValueError('CSMOD: \"kernel\" is out of range [int(1~8)] !')
 	# 1: Gaussian Blur radius=1(RG11),      2: Average Blur(RG20),
 	# 3: Gaussian Blur radius=2(RG11+RG20), 4: Gaussian Blur radius=3(RG11+RG20+RG20),
 	# 5: Median Blur(RG4),                  6: Median Blur + Gaussian Blur(RG4+RG11)
@@ -423,17 +420,17 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	# Otherwise define a custom kernel in string such as kernel="removegrain(20, 11)".
 	
 	if not (isinstance(secure, int) or isinstance(secure, float)):
-		raise TypeError('CSMOD:\"secure\" must be float !')
+		raise TypeError('CSMOD: \"secure\" must be float !')
 	elif secure < 0 or secure > 255:
-		raise ValueError('CSMOD:\"secure\" must be non-negative float[0~255] !')
+		raise ValueError('CSMOD: \"secure\" must be non-negative float[0~255] !')
 	# Threshold(on an 8-bit scale) to avoid banding & oil painting (or face wax) effect of sharpening, set 0 to disable it.(from LSFmod)
 	
 	if Smode is None:
 		Smode = 3
 	elif not (isinstance(Smode, int) or isinstance(Smode, str)):
-		raise TypeError('CSMOD:\"Smode\" must be int or string !')
+		raise TypeError('CSMOD: \"Smode\" must be int or string !')
 	elif isinstance(Smode, int) and (Smode < 0 or Smode > 3):
-		raise ValueError('CSMOD:\"Smode\" is out of range [int(0~3)] !')
+		raise ValueError('CSMOD: \"Smode\" is out of range [int(0~3)] !')
 	# Sharpen Mode - 0: None, 1: Linear, 2: Non-linear 1, 3:Non-linear 2(from LSFmod Smode=5), Otherwise define a custom Smode in string.
 	
 	if divisor is None:
@@ -473,43 +470,43 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		RepmodeU = Repmode
 		
 	if not isinstance(Slimit, bool):
-		raise TypeError('CSMOD:\"Slimit\" must be bool !')
+		raise TypeError('CSMOD: \"Slimit\" must be bool !')
 	# Spatial limit with overshoot and undershoot. Disabled when (limit==true && thr==0 && thrc==0).
 	
 	if not isinstance(Tlimit, bool):
-		raise TypeError('CSMOD:\"Tlimit\" must be bool !')
+		raise TypeError('CSMOD: \"Tlimit\" must be bool !')
 	# Use MC Temporal limit at the end of sharpening.(from MCTD)
 	
 	if strength is None:
 		strength = 100
 			
 	if Sovershoot is None:
-		Sovershoot = round(strength/160)
-	Sovershoot = max(Sovershoot,0)
+		Sovershoot = round(strength / 160)
+	Sovershoot = max(Sovershoot, 0)
 		
 	if Sundershoot is None:
 		Sundershoot = Sovershoot
-	Sundershoot = max(Sundershoot,0)
+	Sundershoot = max(Sundershoot, 0)
 		
 	if Tovershoot is None:
-		Tovershoot = round(strength/48)
-	Tovershoot = max(Tovershoot,0)
+		Tovershoot = round(strength / 48)
+	Tovershoot = max(Tovershoot, 0)
 
 	if Tundershoot is None:
 		Tundershoot = Tovershoot
-	Tundershoot = max(Tundershoot,0)
+	Tundershoot = max(Tundershoot, 0)
 	
 	if not isinstance(Soft, int):
-		raise TypeError('CSMOD:\"Soft\" must be int !')
+		raise TypeError('CSMOD: \"Soft\" must be int !')
 	elif Soft < -2 or Soft > 100:
-		raise ValueError('CSMOD:\"Soft\" is out of range [int(-2~100)] !')
+		raise ValueError('CSMOD: \"Soft\" is out of range [int(-2~100)] !')
 	# enhanced Soft	
 	if limit and thr == 0 and thrc == 0:
 		Soft = 0
 	elif Soft <= -2:
-		Soft = (1.0+(2.0/(ss_w+ss_h))) * math.sqrt(strength)
+		Soft = (1.0 + (2.0 / (ss_w+ss_h))) * math.sqrt(strength)
 	elif Soft == -1:
-		Soft = math.sqrt( (((ss_w+ss_h)/2.0-1.0)*100.0) ) * 10
+		Soft = math.sqrt((((ss_w + ss_h) / 2.0 - 1.0) * 100.0)) * 10
 	else:
 		Soft = Soft
 	# Soft the sharpening effect (-1 = old autocalculate, -2 = new autocalculate, 0 = disable, (0, 100] = enable).
@@ -521,18 +518,18 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		else:
 			Soothe = 24
 	elif not isinstance(Soothe, int):
-		raise TypeError('CSMOD:\"Soothe\" must be int !')
+		raise TypeError('CSMOD: \"Soothe\" must be int !')
 	elif Soothe < -1 or Soothe > 100:
-		raise ValueError('CSMOD:\"Soothe\" is out of range [int(-1~100)] !')
+		raise ValueError('CSMOD: \"Soothe\" is out of range [int(-1~100)] !')
 	if Tlimit:
 		Soothe = -1
 	# Soothe temporal stabilization, 0-100 sets minimum percent of the original sharpening to keep, -1 disables Soothe. Disabled when (chroma==true && Tlimit=true).
 	
 	if not isinstance(chromamv, bool):
-		raise TypeError('CSMOD:\"chromamv\" must be bool !')
+		raise TypeError('CSMOD: \"chromamv\" must be bool !')
 		
 	if not isinstance(nr, bool):
-		raise TypeError('CSMOD:\"nr\" must be bool !')
+		raise TypeError('CSMOD: \"nr\" must be bool !')
 	
 	
 	# Avisynth Function: Spline	
@@ -582,9 +579,9 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 			b = (x - xa[klo]) / h
 			
 			if cubic:
-				y = a * ya[klo] + b*ya[khi] + ((a*a*a - a)*y2a[klo] + (b*b*b - b)*y2a[khi]) * (h*h) / float(6)
+				y = a * ya[klo] + b * ya[khi] + (( a * a * a - a) * y2a[klo] + (b * b * b - b) * y2a[khi]) * (h * h) / float(6)
 			else:
-				y = a * ya[klo] + b*ya[khi]
+				y = a * ya[klo] + b * ya[khi]
 			return y
 		
 		spline(xa, ya, n, y2a)
@@ -597,7 +594,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		if sbitPS == depth:
 			return input
 		else:
-			return core.fmtc.bitdepth(input,bits=depth,flt=0,dmode=3)
+			return core.fmtc.bitdepth(input, bits=depth, flt=0, dmode=3)
 		
 	
 	# Internal Function: SuperSample
@@ -605,8 +602,8 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		w = input.width
 		h = input.height
 		sbitPS = input.format.bits_per_sample
-		wss = round(w*ss_wf/8)*8
-		hss = round(h*ss_hf/8)*8
+		wss = round(w * ss_wf / 8) * 8
+		hss = round(h * ss_hf / 8) * 8
 		if target_width is None:
 			target_width = wss
 		if target_height is None:
@@ -614,8 +611,8 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		if chroma is None:
 			chroma = True
 			
-		res_mul = float( target_width * target_height ) / float( w * h )
-		res_mul = min( max(res_mul, 1), 2.25)
+		res_mul = float(target_width * target_height) / float(w * h)
+		res_mul = min(max(res_mul, 1), 2.25)
 		if not (isinstance(nr, float) or isinstance(nr, int)):
 			if nr:
 				nr_weight = Spline(res_mul, 1, 0, 2.25, 1, 3.5, 0, True)
@@ -627,9 +624,9 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		
 		inputp = input
 		
-		resize = core.fmtc.resample(inputp,w=target_width, h=target_height, kernel="spline64")
+		resize = core.fmtc.resample(inputp, w=target_width, h=target_height, kernel="spline64")
 		resize = Depth(resize, sbitPS)
-		nrres = core.fmtc.resample(inputp,w=target_width, h=target_height, kernel="gaussian", a1=100)
+		nrres = core.fmtc.resample(inputp, w=target_width, h=target_height, kernel="gaussian", a1=100)
 		nrres = Depth(nrres, sbitPS)
 		
 		if nr_weight == 0:
@@ -646,21 +643,21 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	
 	def CSmod_nnedi3_SuperSample(input, ss_wf=ss_w, ss_hf=ss_h):
 		# get cycle times
-		cyclew = math.ceil(math.log(ss_wf,2))
-		cycleh = math.ceil(math.log(ss_hf,2))
+		cyclew = math.ceil(math.log(ss_wf, 2))
+		cycleh = math.ceil(math.log(ss_hf, 2))
 		# constant values
 		sbitPS = input.format.bits_per_sample
-		wss = round(input.width*ss_wf/8)*8
-		hss = round(input.height*ss_hf/8)*8
+		wss = round(input.width * ss_wf / 8) * 8
+		hss = round(input.height * ss_hf / 8) * 8
 		# nothing to say..
 		def SS(src):
 			
 			if ss_hq != 1:
-				src = Depth(src,8)
-				ss = core.nnedi3.nnedi3(src,qual=2,nsize=0,nns=3, pscrn=2 if ss_hq==0 else ss_hq,field=1,dh=True)
+				src = Depth(src, 8)
+				ss = core.nnedi3.nnedi3(src, qual=2, nsize=0, nns=3, pscrn=2 if ss_hq==0 else ss_hq, field=1, dh=True)
 			else:
-				ss = core.nnedi3.nnedi3(src,qual=2,field=1,dh=True,pscrn=1)
-			fix = core.fmtc.resample(ss,sy=[-0.5,-0.5*(1<<ss.format.subsampling_h)],kernel="spline64")
+				ss = core.nnedi3.nnedi3(src, qual=2, field=1, dh=True, pscrn=1)
+			fix = core.fmtc.resample(ss, sy=[-0.5, -0.5*(1<<ss.format.subsampling_h)], kernel="spline64")
 			
 			return fix
 		#SuperSampleing in vertical
@@ -681,16 +678,14 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		if final.width == wss and final.height == hss:
 			output = final
 		else:
-			output = CSmod_nrSpline64Resize(final,target_width=wss,target_height=hss)
+			output = CSmod_nrSpline64Resize(final, target_width=wss, target_height=hss)
 		return Depth(output,sbitPS)
-		
-	
 	
 	# ssout ? TO DO UV
 	if not chroma and not sGRAY:
 		if ssout:
-			U = CSmod_nrSpline64Resize(U,int(U.width*ss_w),int(U.height*ss_h))
-			V = CSmod_nrSpline64Resize(V,int(V.width*ss_w),int(V.height*ss_h))
+			U = CSmod_nrSpline64Resize(U, int(U.width*ss_w), int(U.height*ss_h))
+			V = CSmod_nrSpline64Resize(V, int(V.width*ss_w), int(V.height*ss_h))
 	
 	# Auto Select SuperSampleing Method
 	def SSMethod(input, target_width=None, target_height=None, chroma=chroma, nr=nr, ss_wf=ss_w, ss_hf=ss_h):
@@ -698,12 +693,12 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 			if ss_hq != 0 :
 				return CSmod_nnedi3_SuperSample(input, ss_wf=ss_wf, ss_hf=ss_hf)
 			else:
-				if ss_w*ss_h > 3.0625:
+				if ss_w * ss_h > 3.0625:
 					return CSmod_nnedi3_SuperSample(input, ss_wf=ss_wf, ss_hf=ss_hf)
 				else:
 					return CSmod_nrSpline64Resize(input, target_width=target_width, target_height=target_height, chroma=chroma, nr=nr, ss_wf=ss_wf, ss_hf=ss_hf)
 		else:
-			return CALL(ssmethod,input)
+			return CALL(ssmethod, input)
 	# NEXT super sampling, filtering in ss clip
 	if not defsrc:
 		source = filtered
@@ -722,7 +717,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	
 	# custom filter_ss
 	if deffss:
-		filtered = CALL(filter_ss,filtered_ss)
+		filtered = CALL(filter_ss, filtered_ss)
 	else:
 		filtered = filtered_ss
 		
@@ -744,37 +739,37 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if defpclp:
 		pre = pclip
 	elif preblur <= -7:
-		pre = core.rgvs.RemoveGrain(fforpre, [19] if (chroma and prec) or GRAYS else [19,0])
-		pre = coer.rgvs.RemoveGrain(pre, [4] if (chroma and prec) or GRAYS else [4,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [19] if (chroma and prec) or GRAYS else [19, 0])
+		pre = coer.rgvs.RemoveGrain(pre, [4] if (chroma and prec) or GRAYS else [4, 0])
 	elif preblur == -6:
-		pre = core.rgvs.RemoveGrain(fforpre, [4] if (chroma and prec) or GRAYS else [4,0])
-		pre = core.rgvs.RemoveGrain(pre, [11] if (chroma and prec) or GRAYS else [11,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [4] if (chroma and prec) or GRAYS else [4, 0])
+		pre = core.rgvs.RemoveGrain(pre, [11] if (chroma and prec) or GRAYS else [11, 0])
 	elif preblur == -5:
-		pre = core.rgvs.RemoveGrain(fforpre, [20] if (chroma and prec) or GRAYS else [20,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [20] if (chroma and prec) or GRAYS else [20, 0])
 	elif preblur == -4:
-		pre = core.rgvs.RemoveGrain(fforpre, [4] if (chroma and prec) or GRAYS else [4,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [4] if (chroma and prec) or GRAYS else [4, 0])
 	elif preblur == -3:
-		pre = core.rgvs.RemoveGrain(fforpre, [11] if (chroma and prec) or GRAYS else [11,0])
-		pre = core.rgvs.RemoveGrain(pre, [20] if (chroma and prec) or GRAYS else [20,0])
-		pre = core.rgvs.RemoveGrain(pre, [20] if (chroma and prec) or GRAYS else [20,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [11] if (chroma and prec) or GRAYS else [11, 0])
+		pre = core.rgvs.RemoveGrain(pre, [20] if (chroma and prec) or GRAYS else [20, 0])
+		pre = core.rgvs.RemoveGrain(pre, [20] if (chroma and prec) or GRAYS else [20, 0])
 	elif preblur == -2:
-		pre = core.rgvs.RemoveGrain(fforpre, [11] if (chroma and prec) or GRAYS else [11,0])
-		pre = core.rgvs.RemoveGrain(pre, [20] if (chroma and prec) or GRAYS else [20,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [11] if (chroma and prec) or GRAYS else [11, 0])
+		pre = core.rgvs.RemoveGrain(pre, [20] if (chroma and prec) or GRAYS else [20, 0])
 	elif preblur == -1:
-		pre = core.rgvs.RemoveGrain(fforpre, [11] if (chroma and prec) or GRAYS else [11,0])
+		pre = core.rgvs.RemoveGrain(fforpre, [11] if (chroma and prec) or GRAYS else [11, 0])
 	elif preblur == 1:
-		spatial = haf.MinBlur(fforpre, preR, [0,1,2] if (chroma and prec) or GRAYS else [0])
+		spatial = haf.MinBlur(fforpre, preR, [0, 1, 2] if (chroma and prec) or GRAYS else [0])
 		pre = spatial
 	elif preblur == 2:
-		spatial = haf.MinBlur(fforpre, preR, [0,1,2] if (chroma and prec) or GRAYS else [0])
-		temporal = core.flux.SmoothT(spatial, 7, [0] if not (chroma and prec) or GRAYS else [0,1,2])
-		temporal = core.rgvs.Repair(temporal, spatial, [1] if prec or GRAYS else [1,0])
+		spatial = haf.MinBlur(fforpre, preR, [0, 1, 2] if (chroma and prec) or GRAYS else [0])
+		temporal = core.flux.SmoothT(spatial, 7, [0] if not (chroma and prec) or GRAYS else [0, 1, 2])
+		temporal = core.rgvs.Repair(temporal, spatial, [1] if prec or GRAYS else [1, 0])
 		mixed = core.std.Merge(temporal, spatial, 0.251)
 		pre = mixed
 	elif preblur >= 3:
-		spatial = haf.MinBlur(fforpre, preR, [0,1,2] if (chroma and prec) or GRAYS else [0])
-		temporal = core.flux.SmoothT(spatial, 7, [0,1,2] if (chroma and prec) or GRAYS else [0])
-		temporal = core.rgvs.Repair(temporal, spatial, [1] if prec or GRAYS else [1,0])
+		spatial = haf.MinBlur(fforpre, preR, [0, 1, 2] if (chroma and prec) or GRAYS else [0])
+		temporal = core.flux.SmoothT(spatial, 7, [0, 1, 2] if (chroma and prec) or GRAYS else [0])
+		temporal = core.rgvs.Repair(temporal, spatial, [1] if prec or GRAYS else [1, 0])
 		pre = temporal
 	else:
 		pre = filtered
@@ -782,10 +777,10 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	if (pre.width == sw and pre.height == sh):
 		pre_ds = pre
 	else:
-		pre_ds = CSmod_nrSpline64Resize(pre,sw,sh,chroma)
+		pre_ds = CSmod_nrSpline64Resize(pre, sw, sh, chroma)
 	if (ss_w > 1.0 or ss_h > 1.0):
-		wss = round(sw*ss_w/8)*8
-		hss = round(sh*ss_h/8)*8
+		wss = round(sw * ss_w / 8) * 8
+		hss = round(sh * ss_h / 8) * 8
 		if (pre.width == wss and pre.height == hss):
 			pre = pre
 		else:
@@ -801,12 +796,12 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	# generate edge mask
 	if ssout:
 		if (Tlimit and not chroma and chromamv) and not GRAYS:
-			prefinal = core.std.Merge(pre, filtered_ss, [0,1])
+			prefinal = core.std.Merge(pre, filtered_ss, [0, 1])
 		else:
 			prefinal = pre
 	else:
 		if (Tlimit and not chroma and chromamv) and not GRAYS:
-			prefinal = core.std.Merge(pre_ds, filtered_os, [0,1])
+			prefinal = core.std.Merge(pre_ds, filtered_os, [0, 1])
 		else:
 			prefinal = pre_ds
 			
@@ -819,129 +814,129 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		edgemask = edgemask
 	else:
 		sbitPS = prefinal.format.bits_per_sample
-		prefinal8 = Depth(prefinal,8)
-		srcfinal8 = Depth(srcfinal,8)
+		prefinal8 = Depth(prefinal, 8)
+		srcfinal8 = Depth(srcfinal, 8)
 		# -1: Same as mtype=1 in TAA(sobel)
 		if edgemask == -1:
-			edgemask = core.std.Convolution(prefinal8,[0, -1, 0, -1, 0, 1, 0, 1, 0],planes=0)
+			edgemask = core.std.Convolution(prefinal8, [0, -1, 0, -1, 0, 1, 0, 1, 0], planes=0)
 			mt = "x 7 < 0 255 ?"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.std.Inflate(edgemask,planes=0)
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
+			edgemask = core.std.Inflate(edgemask, planes=0)
 		# -2: Same as mtype=2 in TAA(roberts)
 		elif edgemask == -2:
-			edgemask = core.std.Convolution(prefinal8,[0, 0, 0, 0, 2, -1, 0, -1, 0],planes=0)
+			edgemask = core.std.Convolution(prefinal8, [0, 0, 0, 0, 2, -1, 0, -1, 0], planes=0)
 			mt = "x 4 > 255 x ?"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.std.Inflate(edgemask,planes=0)
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt,""])
+			edgemask = core.std.Inflate(edgemask, planes=0)
 		# -3: Same as mtype=3 in TAA(prewitt)
 		elif edgemask == -3:
-			edgemask1 = core.std.Convolution(prefinal8,[1, 1, 0, 1, 0, -1, 0, -1, -1],divisor=1,saturate=False,planes=0)
-			edgemask2 = core.std.Convolution(prefinal8,[1, 1, 1, 0, 0, 0, -1, -1, -1],divisor=1,saturate=False,planes=0)
-			edgemask3 = core.std.Convolution(prefinal8,[1, 0, -1, 1, 0, -1, 1, 0, -1],divisor=1,saturate=False,planes=0)
-			edgemask4 = core.std.Convolution(prefinal8,[0, -1, -1, 1, 0, -1, 1, 1, 0],divisor=1,saturate=False,planes=0)
+			edgemask1 = core.std.Convolution(prefinal8, [1, 1, 0, 1, 0, -1, 0, -1, -1], divisor=1, saturate=False, planes=0)
+			edgemask2 = core.std.Convolution(prefinal8, [1, 1, 1, 0, 0, 0, -1, -1, -1], divisor=1, saturate=False, planes=0)
+			edgemask3 = core.std.Convolution(prefinal8, [1, 0, -1, 1, 0, -1, 1, 0, -1], divisor=1, saturate=False, planes=0)
+			edgemask4 = core.std.Convolution(prefinal8, [0, -1, -1, 1, 0, -1, 1, 1, 0], divisor=1, saturate=False, planes=0)
 			mt = "x y max z max a max 1.8 pow"
-			edgemask = core.std.Expr([edgemask1,edgemask2,edgemask3,edgemask4],[mt] if GRAYS else [mt,""])
-			edgemask = core.rgvs.RemoveGrain(edgemask,[4] if GRAYS else [4,0])
-			edgemask = core.std.Inflate(edgemask,planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20] if GRAYS else [20,0])
+			edgemask = core.std.Expr([edgemask1, edgemask2, edgemask3, edgemask4], [mt] if GRAYS else [mt, ""])
+			edgemask = core.rgvs.RemoveGrain(edgemask, [4] if GRAYS else [4, 0])
+			edgemask = core.std.Inflate(edgemask, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20] if GRAYS else [20, 0])
 		# -4: Same as mtype=4 in TAA(TEdgeMask)
 		elif edgemask == -4:
-			edgemask = core.generic.TEdge(prefinal8,planes=0)
-			mt = "x "+str(edgethr*3.0)+" <= x 2 / x 16 * ?"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.std.Deflate(edgemask,planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20 if HD else 11] if GRAYS else [20 if HD else 11,0])
+			edgemask = core.generic.TEdge(prefinal8, planes=0)
+			mt = "x " + str(edgethr * 3.0) + " <= x 2 / x 16 * ?"
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
+			edgemask = core.std.Deflate(edgemask, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
 		# -5: Same as mtype=5 in TAA(tcanny)
 		elif edgemask == -5:
 			edgemask = core.tcanny.TCanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
-			mt = "x "+str(edgethr)+" <= x 2 / x 2 * ?"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20 if HD else 11] if GRAYS else [20 if HD else 11,0])
-			edgemask = core.std.Inflate(edgemask,planes=0)
+			mt = "x " + str(edgethr) + " <= x 2 / x 2 * ?"
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
+			edgemask = core.std.Inflate(edgemask, planes=0)
 		# -6: Same as mtype=6 in TAA(MSharpen)
 		elif edgemask == -6:
-			edgemask = core.msmoosh.MSharpen(prefinal8,threshold=edgethr//5,strength=0, mask=True, planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20 if HD else 11] if GRAYS else [20 if HD else 11,0])
+			edgemask = core.msmoosh.MSharpen(prefinal8, threshold=edgethr//5, strength=0, mask=True, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
 		# -7: My own method of tcanny usage of AA mask
 		elif edgemask <= -7:
-			edgemask = core.tcanny.TCanny(srcfinal8,sigma=tcannysigma,mode=1,planes=0)
-			mt = "x "+str(edgethr)+" <= 0 x "+str(edgethr)+" - 64 * ?"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20 if HD else 11] if GRAYS else [20 if HD else 11,0])
+			edgemask = core.tcanny.TCanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
+			mt = "x " + str(edgethr) + " <= 0 x " + str(edgethr) + " - 64 * ?"
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
 			edgemask = core.std.Inflate(edgemask, planes=0)
 		# 1: Same as edgemaskHQ=False in LSFmod(min/max)
 		elif edgemask == 1:
-			edgemask1 = core.std.Maximum(prefinal8,planes=0)
-			edgemask2 = core.std.Minimum(prefinal8,planes=0)
-			mt = "x y - "+str(edgethr)+" / 0.86 pow 255 *"
-			edgemask = core.std.Expr([edgemask1,edgemask2],[mt] if GRAYS else [mt,""])
-			edgemask = core.std.Inflate(edgemask,planes=0)
-			edgemask = core.std.Inflate(edgemask,planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[11] if GRAYS else [11,0])
+			edgemask1 = core.std.Maximum(prefinal8, planes=0)
+			edgemask2 = core.std.Minimum(prefinal8, planes=0)
+			mt = "x y - " + str(edgethr) + " / 0.86 pow 255 *"
+			edgemask = core.std.Expr([edgemask1,edgemask2], [mt] if GRAYS else [mt, ""])
+			edgemask = core.std.Inflate(edgemask, planes=0)
+			edgemask = core.std.Inflate(edgemask, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [11] if GRAYS else [11, 0])
 		# 2: Same as edgemaskHQ=True in LSFmod,
 		elif edgemask == 2:
-			edgemask1 = core.std.Convolution(prefinal8,[8, 16, 8, 0, 0, 0, -8, -16, -8],divisor=4,saturate=False,planes=0)
-			edgemask2 = core.std.Convolution(prefinal8,[8, 0, -8, 16, 0, -16, 8, 0, -8],divisor=4,saturate=False,planes=0)
-			mt = "x y max "+str(edgethr*4)+" / 0.86 pow 255 *"
-			edgemask = core.std.Expr([edgemask1,edgemask2],[mt] if GRAYS else [mt,""])
-			edgemask = core.std.Inflate(edgemask,planes=0)
-			edgemask = core.std.Inflate(edgemask,planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[11] if GRAYS else [11,0])
+			edgemask1 = core.std.Convolution(prefinal8, [8, 16, 8, 0, 0, 0, -8, -16, -8], divisor=4, saturate=False, planes=0)
+			edgemask2 = core.std.Convolution(prefinal8, [8, 0, -8, 16, 0, -16, 8, 0, -8], divisor=4, saturate=False, planes=0)
+			mt = "x y max " + str(edgethr * 4) + " / 0.86 pow 255 *"
+			edgemask = core.std.Expr([edgemask1, edgemask2], [mt] if GRAYS else [mt, ""])
+			edgemask = core.std.Inflate(edgemask, planes=0)
+			edgemask = core.std.Inflate(edgemask, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [11] if GRAYS else [11, 0])
 		# 3: Same as sharpening mask in MCTD(prewitt)
 		elif edgemask == 3:
-			edgemask1 = core.std.Convolution(prefinal8,[1, 1, 0, 1, 0, -1, 0, -1, -1],divisor=1,saturate=False,planes=0)
-			edgemask2 = core.std.Convolution(prefinal8,[1, 1, 1, 0, 0, 0, -1, -1, -1],divisor=1,saturate=False,planes=0)
-			edgemask3 = core.std.Convolution(prefinal8,[1, 0, -1, 1, 0, -1, 1, 0, -1],divisor=1,saturate=False,planes=0)
-			edgemask4 = core.std.Convolution(prefinal8,[0, -1, -1, 1, 0, -1, 1, 1, 0],divisor=1,saturate=False,planes=0)
+			edgemask1 = core.std.Convolution(prefinal8, [1, 1, 0, 1, 0, -1, 0, -1, -1], divisor=1, saturate=False, planes=0)
+			edgemask2 = core.std.Convolution(prefinal8, [1, 1, 1, 0, 0, 0, -1, -1, -1], divisor=1, saturate=False, planes=0)
+			edgemask3 = core.std.Convolution(prefinal8, [1, 0, -1, 1, 0, -1, 1, 0, -1], divisor=1, saturate=False, planes=0)
+			edgemask4 = core.std.Convolution(prefinal8, [0, -1, -1, 1, 0, -1, 1, 1, 0], divisor=1, saturate=False, planes=0)
 			mt = "x y max z max a max"
-			edgemask = core.std.Expr([edgemask1,edgemask2,edgemask3,edgemask4],[mt] if GRAYS else [mt,""])
-			mt = "x "+str(round(edgethr*0.25))+" < 0 x ? 1.8 pow"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.rgvs.RemoveGrain(edgemask,[4] if GRAYS else [4,0])
-			edgemask = core.std.Inflate(edgemask,planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20] if GRAYS else [20,0])
+			edgemask = core.std.Expr([edgemask1, edgemask2, edgemask3, edgemask4], [mt] if GRAYS else [mt, ""])
+			mt = "x " + str(round(edgethr * 0.25)) + " < 0 x ? 1.8 pow"
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
+			edgemask = core.rgvs.RemoveGrain(edgemask, [4] if GRAYS else [4, 0])
+			edgemask = core.std.Inflate(edgemask, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20] if GRAYS else [20, 0])
 		# 4: MSharpen mask,
 		elif edgemask == 4:
-			edgemask = core.msmoosh.MSharpen(prefinal8,threshold=edgethr//10,strength=0, mask=True, planes=0)
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20 if HD else 11] if GRAYS else [20 if HD else 11,0])
+			edgemask = core.msmoosh.MSharpen(prefinal8, threshold=edgethr//10, strength=0, mask=True, planes=0)
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
 		# 5: tcanny mask(less sensitive to noise)
 		elif edgemask == 5:
 			edgemask = core.tcanny.TCanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
-			mt = "x "+str(edgethr*0.5)+" <= 0 x "+str(edgethr*0.5)+" - 2.4 pow ?"
-			edgemask = core.std.Expr(edgemask,[mt] if GRAYS else [mt,""])
-			edgemask = core.rgvs.RemoveGrain(edgemask,[20 if HD else 11] if GRAYS else [20 if HD else 11,0])
-			edgemask = core.std.Inflate(edgemask,planes=0)
+			mt = "x " + str(edgethr * 0.5) + " <= 0 x " + str(edgethr * 0.5) + " - 2.4 pow ?"
+			edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
+			edgemask = core.std.Inflate(edgemask, planes=0)
 		# 6: prewitt mask with mt_hysteresis(less sensitive to noise)
 		else:
-			edgemask1 = core.std.Convolution(prefinal8,[1, 1, 0, 1, 0, -1, 0, -1, -1],divisor=1,saturate=False,planes=0)
-			edgemask2 = core.std.Convolution(prefinal8,[1, 1, 1, 0, 0, 0, -1, -1, -1],divisor=1,saturate=False,planes=0)
-			edgemask3 = core.std.Convolution(prefinal8,[1, 0, -1, 1, 0, -1, 1, 0, -1],divisor=1,saturate=False,planes=0)
-			edgemask4 = core.std.Convolution(prefinal8,[0, -1, -1, 1, 0, -1, 1, 1, 0],divisor=1,saturate=False,planes=0)
+			edgemask1 = core.std.Convolution(prefinal8, [1, 1, 0, 1, 0, -1, 0, -1, -1], divisor=1, saturate=False, planes=0)
+			edgemask2 = core.std.Convolution(prefinal8, [1, 1, 1, 0, 0, 0, -1, -1, -1], divisor=1, saturate=False, planes=0)
+			edgemask3 = core.std.Convolution(prefinal8, [1, 0, -1, 1, 0, -1, 1, 0, -1], divisor=1, saturate=False, planes=0)
+			edgemask4 = core.std.Convolution(prefinal8, [0, -1, -1, 1, 0, -1, 1, 1, 0], divisor=1, saturate=False, planes=0)
 			mt = "x y max z max a max"
-			prewittm = core.std.Expr([edgemask1,edgemask2,edgemask3,edgemask4],[mt] if GRAYS else [mt,""])
-			mt = "x "+str(round(edgethr*0.5))+" < 0 x ?"
-			prewittm = core.std.Expr(prewittm,[mt] if GRAYS else [mt,""])
-			prewitt = core.rgvs.RemoveGrain(prewittm, [4] if GRAYS else [4,0])
-			edgemask = core.generic.Hysteresis(prewitt, prewittm,[0])
-			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
+			prewittm = core.std.Expr([edgemask1, edgemask2, edgemask3, edgemask4], [mt] if GRAYS else [mt, ""])
+			mt = "x " + str(round(edgethr * 0.5)) + " < 0 x ?"
+			prewittm = core.std.Expr(prewittm, [mt] if GRAYS else [mt, ""])
+			prewitt = core.rgvs.RemoveGrain(prewittm, [4] if GRAYS else [4, 0])
+			edgemask = core.generic.Hysteresis(prewitt, prewittm, [0])
+			edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
 		
 		# 1~6 are masks tweaked for Sharpening, -1~-7 are masks tweaked for AA.
 		# Otherwise define a custom edge mask clip, only luma is taken to merge all planes.	
 		
-		edgemask = Depth(edgemask,sbitPS)
+		edgemask = Depth(edgemask, sbitPS)
 	
-	def average(clipa, clipb, planes=[0,1,2]):
+	def average(clipa, clipb, planes=[0, 1, 2]):
 		if 1 or 2 in planes:
-			return (core.std.Expr(clips=[clipa,clipb], expr=["x y + 2 /"]))		
+			return (core.std.Expr(clips=[clipa, clipb], expr=["x y + 2 /"]))		
 		else:
 			if not GRAYS:
-				return (core.std.Expr(clips=[clipa,clipb], expr=["x y + 2 /",""]))		
+				return (core.std.Expr(clips=[clipa, clipb], expr=["x y + 2 /", ""]))		
 			else:
-				return (core.std.Expr(clips=[clipa,clipb], expr=["x y + 2 /"]))
+				return (core.std.Expr(clips=[clipa, clipb], expr=["x y + 2 /"]))
 	# unsharp	
-	dark_limit = haf.mt_inpand_multi(pre,planes = [0,1,2] if chroma or GRAYS else [0])
-	bright_limit = haf.mt_expand_multi(pre,planes = [0,1,2] if chroma or GRAYS else [0])
-	minmaxavg = average(dark_limit,bright_limit,planes = [0,1,2] if chroma or GRAYS else [0])
+	dark_limit = haf.mt_inpand_multi(pre, planes=[0, 1, 2] if chroma or GRAYS else [0])
+	bright_limit = haf.mt_expand_multi(pre, planes=[0, 1, 2] if chroma or GRAYS else [0])
+	minmaxavg = average(dark_limit,bright_limit, planes=[0, 1, 2] if chroma or GRAYS else [0])
 	if Smethod <= 1:
 		method = pre
 	else:
@@ -952,28 +947,28 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 	else:
 		if type(kernel) != type(CALL):
 			if kernel <= 1:
-				method = core.rgvs.RemoveGrain(method,[11] if chroma or GRAYS else [11,0])
+				method = core.rgvs.RemoveGrain(method, [11] if chroma or GRAYS else [11, 0])
 			elif kernel == 2:
-				method = core.rgvs.RemoveGrain(method,[20] if chroma or GRAYS else [20,0])
+				method = core.rgvs.RemoveGrain(method, [20] if chroma or GRAYS else [20, 0])
 			elif kernel == 3:
-				method = core.rgvs.RemoveGrain(method,[11] if chroma or GRAYS else [11,0])
-				method = core.rgvs.RemoveGrain(method,[20] if chroma or GRAYS else [20,0])
+				method = core.rgvs.RemoveGrain(method, [11] if chroma or GRAYS else [11, 0])
+				method = core.rgvs.RemoveGrain(method, [20] if chroma or GRAYS else [20, 0])
 			elif kernel == 4:
-				method = core.rgvs.RemoveGrain(method,[11] if chroma or GRAYS else [11,0])
-				method = core.rgvs.RemoveGrain(method,[20] if chroma or GRAYS else [20,0])
-				method = core.rgvs.RemoveGrain(method,[20] if chroma or GRAYS else [20,0])
+				method = core.rgvs.RemoveGrain(method, [11] if chroma or GRAYS else [11, 0])
+				method = core.rgvs.RemoveGrain(method, [20] if chroma or GRAYS else [20, 0])
+				method = core.rgvs.RemoveGrain(method, [20] if chroma or GRAYS else [20, 0])
 			elif kernel == 5:
-				method = core.rgvs.RemoveGrain(method,[4] if chroma or GRAYS else [4,0])
+				method = core.rgvs.RemoveGrain(method, [4] if chroma or GRAYS else [4, 0])
 			elif kernel == 6:
-				method = core.rgvs.RemoveGrain(method,[4] if chroma or GRAYS else [4,0])
-				method = core.rgvs.RemoveGrain(method,[11] if chroma or GRAYS else [11,0])
+				method = core.rgvs.RemoveGrain(method, [4] if chroma or GRAYS else [4, 0])
+				method = core.rgvs.RemoveGrain(method, [11] if chroma or GRAYS else [11, 0])
 			elif kernel == 7:
-				method = core.rgvs.RemoveGrain(method,[19] if chroma or GRAYS else [19,0])
-				method = core.rgvs.RemoveGrain(method,[4] if chroma or GRAYS else [4,0])
+				method = core.rgvs.RemoveGrain(method, [19] if chroma or GRAYS else [19, 0])
+				method = core.rgvs.RemoveGrain(method, [4] if chroma or GRAYS else [4, 0])
 			else:
-				method == haf.MinBlur(method,1,[0,1,2] if chroma or GRAYS else [0])
+				method == haf.MinBlur(method, 1, [0, 1, 2] if chroma or GRAYS else [0])
 		else:
-			method = CALL(kernel,method)
+			method = CALL(kernel, method)
 	
 	# a simplified version of LimitFilter from mvsfunc
 	if secure > 0:
@@ -989,21 +984,21 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		thr_2 = thr * elast
 		thr_slope = 1 / (thr_2 - thr_1)
 		
-		expr = "x y - abs {thr_1} <= x x y - abs {thr_2} >= y y x y - {thr_2} x y - abs - * {thr_slope} * + ? ?".format(thr_1=thr_1,thr_2=thr_2,thr_slope=thr_slope)
+		expr = "x y - abs {thr_1} <= x x y - abs {thr_2} >= y y x y - {thr_2} x y - abs - * {thr_slope} * + ? ?".format(thr_1=thr_1, thr_2=thr_2, thr_slope=thr_slope)
 		
-		method = core.std.Expr([pre,method],[expr] if chroma or GRAYS else [expr,""])
+		method = core.std.Expr([pre, method], [expr] if chroma or GRAYS else [expr, ""])
 	
 	# making difference clip for sharpening
-	sharpdiff = core.std.MakeDiff(pre,method,[0,1,2] if chroma else [0])
+	sharpdiff = core.std.MakeDiff(pre, method,[0, 1, 2] if chroma else [0])
 	
 	# filtering in nr clip
 	if deffnr:
-		filtered = CALL(filter_nr,method)
-		filtered = core.std.MergeDiff(filtered, sharpdiff, [0,1,2] if chroma else [0])
+		filtered = CALL(filter_nr, method)
+		filtered = core.std.MergeDiff(filtered, sharpdiff, [0, 1, 2] if chroma else [0])
 	
 	if (ss_w > 1.0 or ss_h > 1.0):
 		if deffnr:
-			filtered_ds = CSmod_nrSpline64Resize(filtered,sw,sh,chroma=chroma,nr=0)
+			filtered_ds = CSmod_nrSpline64Resize(filtered, sw, sh, chroma=chroma, nr=0)
 		else:
 			filtered_ds = filtered_ds
 	else:
@@ -1011,7 +1006,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		
 	# sharpening diff generate mode
 	if isinstance(Smode, str):
-		sharpdiff = core.std.Expr(sharpdiff,[Smode] if chroma or GRAYS else [Smode,""])
+		sharpdiff = core.std.Expr(sharpdiff, [Smode] if chroma or GRAYS else [Smode, ""])
 	elif Smode <= 0:
 		sharpdiff = sharpdiff
 	elif Smode == 1:
@@ -1026,7 +1021,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 			else:
 				y = ((x - neutral) * (strength / 50.0) + neutral)
 				return min(max(round(y), 0), peak)
-		sharpdiff = core.std.Lut(sharpdiff,function=get_lut1, planes=[0,1,2] if chroma else [0])
+		sharpdiff = core.std.Lut(sharpdiff, function=get_lut1, planes=[0, 1, 2] if chroma else [0])
 	elif Smode == 2:
 		bits = sharpdiff.format.bits_per_sample
 		shift = bits - 8
@@ -1039,7 +1034,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 			else:
 				y = (((x - neutral) / divisor) ** abs(index) * (strength / 20.0) * (1 if x > neutral else -1) + neutral)
 				return min(max(round(y.real), 0), peak)
-		sharpdiff = core.std.Lut(sharpdiff,function=get_lut2, planes=[0,1,2] if chroma else [0])
+		sharpdiff = core.std.Lut(sharpdiff, function=get_lut2, planes=[0, 1, 2] if chroma else [0])
 	else:
 		bits = sharpdiff.format.bits_per_sample
 		shift = bits - 8
@@ -1055,20 +1050,20 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 				tmp3 = Szrp ** 2
 				return min(max(round(x + (abs(tmp1) / Szrp) ** (1 / Spwr) * Szrp * (strength / 100 * multiple) * (1 if x > neutral else -1) * (tmp2 * (tmp3 + SdmpLo) / ((tmp2 + SdmpLo) * tmp3)) * ((1 + (0 if SdmpHi == 0 else (Szrp / SdmpHi) ** 4)) / (1 + (0 if SdmpHi == 0 else (abs(tmp1) / SdmpHi) ** 4)))), 0), peak)
 		
-		# "x 128 == x x 128 - abs "+str(Szrp)+" / "+str(miSpwr)+" ^ "+str(Szrp)+" * "+str(strength/100.0)+" * x 128 > 1 -1 ? * x 128 - 2 ^ "+str(Szrp)+" 2 ^ "+str(SdmpLo)+" + * x 128 - 2 ^ "+str(SdmpLo)+" + "+str(Szrp)+" 2 ^ * / * 1 "+str(SdmpHi)+" 0 == 0 "+str(Szrp)+" "+str(SdmpHi)+" / 4 ^ ? + 1 "+str(SdmpHi)+" 0 == 0 x 128 - abs "+str(SdmpHi)+" / 4 ^ ? + / * 128 + ?"
-		sharpdiff = core.std.Lut(sharpdiff,function=get_lut3, planes=[0,1,2] if chroma else [0])
+		#"x 128 == x x 128 - abs " + str(Szrp) + " / " + str(miSpwr) + " ^ " + str(Szrp) + " * " + str(strength / 100.0) + " * x 128 > 1 -1 ? * x 128 - 2 ^ " + str(Szrp) + " 2 ^ " + str(SdmpLo) + " + * x 128 - 2 ^ " + str(SdmpLo) + " + " + str(Szrp) + " 2 ^ * / * 1 " + str(SdmpHi) + " 0 == 0 " + str(Szrp) + " " + str(SdmpHi) + " / 4 ^ ? + 1 " + str(SdmpHi) + " 0 == 0 x 128 - abs " + str(SdmpHi) + " / 4 ^ ? + / * 128 + ?"
+		sharpdiff = core.std.Lut(sharpdiff, function=get_lut3, planes=[0, 1, 2] if chroma else [0])
 	
-	def clamp(clip, Bclip, Dclip, overshoot=0, undershoot=0, planes=[0,1,2]):
+	def clamp(clip, Bclip, Dclip, overshoot=0, undershoot=0, planes=[0, 1, 2]):
 		if 1 or 2 in planes:
 			mt = 'x y {overshoot} + > y {overshoot} + x ? z {undershoot} - < z {undershoot} - x y {overshoot} + > y {overshoot} + x ? ?'.format(overshoot=overshoot, undershoot=undershoot)
-			output = core.std.Expr([clip,Bclip,Dclip],[mt])
+			output = core.std.Expr([clip, Bclip, Dclip], [mt])
 			return output
 		else:
 			mt = 'x y {overshoot} + > y {overshoot} + x ? z {undershoot} - < z {undershoot} - x y {overshoot} + > y {overshoot} + x ? ?'.format(overshoot=overshoot, undershoot=undershoot)
 			if not GRAYS:
-				output = core.std.Expr([output,Dclip,Dclip],[mt,""])
+				output = core.std.Expr([output, Dclip, Dclip], [mt, ""])
 			else:
-				output = core.std.Expr([clip,Bclip,Dclip],[mt])
+				output = core.std.Expr([clip, Bclip, Dclip], [mt])
 			return output
 	
 	# spatial limit
@@ -1089,14 +1084,14 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		limitclpss = limitclp
 	
 	if Slimit:
-		sclp = core.std.MergeDiff(pre, sharpdiff, [0,1,2] if chroma else [0])
-		sclp = clamp(sclp,bright_limit,dark_limit,Sovershoot,Sundershoot,[0,1,2] if chroma else [0])
+		sclp = core.std.MergeDiff(pre, sharpdiff, [0, 1, 2] if chroma else [0])
+		sclp = clamp(sclp, bright_limit, dark_limit, Sovershoot, Sundershoot, [0, 1, 2] if chroma else [0])
 	else:
 		sclp = None
 	
 	# Soft
 	if Slimit:
-		sharpdiff = core.std.MakeDiff(sclp,pre,[0,1,2] if chroma else [0])
+		sharpdiff = core.std.MakeDiff(sclp, pre, [0, 1, 2] if chroma else [0])
 	if Soft != 0:
 		bits = sharpdiff.format.bits_per_sample
 		shift = bits - 8
@@ -1106,9 +1101,9 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		const = 100 * multiple
 		val = (100-Soft) * multiple
 		SoftMP = multiple * Soft
-		sharpdiff2 = core.rgvs.RemoveGrain(sharpdiff,[19] if chroma or GRAYS else [19,0])
+		sharpdiff2 = core.rgvs.RemoveGrain(sharpdiff, [19] if chroma or GRAYS else [19, 0])
 		mt = 'x {neutral} - abs y {neutral} - abs > y {SoftMP} * x {val} * + {const} / x ?'.format(neutral=neutral, val=val, const=const, SoftMP=SoftMP)
-		sharpdiff = core.std.Expr([sharpdiff,sharpdiff2],[mt] if chroma or GRAYS else [mt,""])
+		sharpdiff = core.std.Expr([sharpdiff, sharpdiff2], [mt] if chroma or GRAYS else [mt, ""])
 
 	
 	# Soothe
@@ -1119,25 +1114,25 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		peak = (1 << bits) - 1
 		multiple = peak / 255
 		const = 100 * multiple
-		sharpdiff2 = core.focus.TemporalSoften(sharpdiff,1,255,255 if chroma else 0,32,2)
+		sharpdiff2 = core.focus.TemporalSoften(sharpdiff, 1, 255, 255 if chroma else 0, 32, 2)
 		mt = 'x {neutral} - y {neutral} - * 0 < x {neutral} - {const} / {Soothe} * {neutral} + x {neutral} - abs y {neutral} - abs > x {Soothe} * y {const} {Soothe} - * + {const} / x ? ?'.format(neutral=neutral, Soothe=Soothe, const=const)
-		sharpdiff = core.std.Expr([sharpdiff,sharpdiff2],[mt] if chroma or GRAYS else [mt,""])
+		sharpdiff = core.std.Expr([sharpdiff, sharpdiff2], [mt] if chroma or GRAYS else [mt, ""])
 		
 	# the difference achieved by filtering
 	if limit:
 		if ssrep:
-			allD = core.std.MakeDiff(source_ss, filtered, [0,1,2] if chroma else [0])
+			allD = core.std.MakeDiff(source_ss, filtered, [0, 1, 2] if chroma else [0])
 		else:
-			allD = core.std.MakeDiff(source, filtered_ds, [0,1,2] if chroma else [0])
+			allD = core.std.MakeDiff(source, filtered_ds, [0, 1, 2] if chroma else [0])
 	else:
 		allD = None
 		
 	# limiting sharpening to source clip
 	if not ssrep and (ss_w > 1.0 or ss_h > 1.0):
-		sharpdiff = CSmod_nrSpline64Resize(sharpdiff,sw,sh,chroma,0)
+		sharpdiff = CSmod_nrSpline64Resize(sharpdiff, sw,sh, chroma, 0)
 	if limit:
 		if not GRAYS:
-			ssDD = core.rgvs.Repair(sharpdiff, allD, [Repmode,RepmodeU] if chroma else [Repmode,0])
+			ssDD = core.rgvs.Repair(sharpdiff, allD, [Repmode, RepmodeU] if chroma else [Repmode, 0])
 		else:
 			ssDD = core.rgvs.Repair(sharpdiff, allD, [Repmode])
 	else:
@@ -1153,9 +1148,9 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		yexpr = 'x {neutral} - abs y {neutral} - abs {thrMP} + <= x y {neutral} < y {thrMP} - y {thrMP} + ? ?'.format(neutral=neutral, thrMP=thrMP)
 		uvexpr = 'x {neutral} - abs y {neutral} - abs {thrcMP} + <= x y {neutral} < y {thrcMP} - y {thrcMP} + ? ?'.format(neutral=neutral, thrcMP=thrcMP)
 		if not GRAYS:
-			ssDD = core.std.Expr([sharpdiff,ssDD],[yexpr,uvexpr] if chroma else [yexpr,""])
+			ssDD = core.std.Expr([sharpdiff, ssDD], [yexpr, uvexpr] if chroma else [yexpr, ""])
 		else:
-			ssDD = core.std.Expr([sharpdiff,ssDD],[yexpr])
+			ssDD = core.std.Expr([sharpdiff, ssDD], [yexpr])
 	if not limit and (thr > 0 or thrc > 0):
 		thrMP = thr * multiple
 		thrcMP = thrc * multiple
@@ -1166,38 +1161,42 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 		yexpr = 'x {neutral} - abs {thrMP} <= x x {neutral} < {valm} {vala} ? ?'.format(neutral=neutral, thrMP=thrMP, valm=valm, vala=vala)
 		uvexpr = 'x {neutral} - abs {thrcMP} <= x x {neutral} < {valcm} {valca} ? ?'.format(neutral=neutral, thrcMP=thrcMP, valcm=valcm, valca=valca)
 		if not GRAYS:
-			ssDD = core.std.Expr(sharpdiff,[yexpr,uvexpr] if chroma else [yexpr,""])
+			ssDD = core.std.Expr(sharpdiff, [yexpr, uvexpr] if chroma else [yexpr, ""])
 		else:
-			ssDD = core.std.Expr(sharpdiff,[yexpr])
+			ssDD = core.std.Expr(sharpdiff, [yexpr])
 	if limit and (thr == 0 and thrc == 0):
 		mt = 'x {neutral} - abs y {neutral} - abs <= x y ?'.format(neutral=neutral)
-		ssDD = core.std.Expr([ssDD,sharpdiff],[mt] if chroma or GRAYS else [mt,""])
+		ssDD = core.std.Expr([ssDD, sharpdiff], [mt] if chroma or GRAYS else [mt, ""])
 	if ssrep and (ss_w > 1.0 or ss_h > 1.0) and not ssout:
-		ssDD = CSmod_nrSpline64Resize(ssDD,sw,sh,chroma,0)
+		ssDD = CSmod_nrSpline64Resize(ssDD, sw,sh, chroma,0)
 		
 	# add difference clip to clip "filtered" of ss/original resolution
 	if ssout:
-		sclp = core.std.MergeDiff(filtered, ssDD, [0,1,2] if chroma else [0])
+		sclp = core.std.MergeDiff(filtered, ssDD, [0, 1, 2] if chroma else [0])
 	else:
-		sclp = core.std.MergeDiff(filtered_ds,ssDD, [0,1,2] if chroma else [0])
+		sclp = core.std.MergeDiff(filtered_ds,ssDD, [0, 1, 2] if chroma else [0])
 		
 	# temporal limit
-	sMVS = core.mv.Super(prefinal,hpad=0,vpad=0,pel=pel, levels=0, sharp=MVsharp, chroma=chroma)
+	sMVS = core.mv.Super(prefinal, hpad=0, vpad=0, pel=pel, levels=0, sharp=MVsharp, chroma=chroma)
 	if usepasf or (preblur == 0 and not defpclp):
 		rMVS = sMVS
 	else:
-		rMVS = core.mv.Super(limitclp,hpad=0,vpad=0,pel=pel, levels=1, sharp=MVsharp, chroma=chroma)
+		rMVS = core.mv.Super(limitclp, hpad=0, vpad=0, pel=pel, levels=1, sharp=MVsharp, chroma=chroma)
 	
-	f1v = core.mv.Analyse(super=sMVS,blksize=blksize,search=search,searchparam=searchparam,pelsearch=pelsearch,isb=False,chroma=chromamv,truemotion=truemotion,_global=MVglobal,overlap=overlap,dct=DCT)
+	f1v = core.mv.Analyse(super=sMVS, blksize=blksize, search=search, searchparam=searchparam,
+	                      pelsearch=pelsearch, isb=False, chroma=chromamv, truemotion=truemotion,
+						  _global=MVglobal, overlap=overlap, dct=DCT)
 
-	b1v = core.mv.Analyse(super=sMVS,blksize=blksize,search=search,searchparam=searchparam,pelsearch=pelsearch,isb=True,chroma=chromamv,truemotion=truemotion,_global=MVglobal,overlap=overlap,dct=DCT)
+	b1v = core.mv.Analyse(super=sMVS, blksize=blksize, search=search, searchparam=searchparam,
+	                      pelsearch=pelsearch, isb=True, chroma=chromamv, truemotion=truemotion,
+						  _global=MVglobal, overlap=overlap, dct=DCT)
 	
-	f1c = core.mv.Compensate(limitclp,rMVS,f1v,thsad=thSAD, thscd1=thSCD1, thscd2=thSCD2)
-	b1c = core.mv.Compensate(limitclp,rMVS,b1v,thsad=thSAD, thscd1=thSCD1, thscd2=thSCD2)
-	Tmax = core.std.Expr([limitclp,f1c,b1c],["x y max z max"] if chroma or GRAYS else ["x y max z max",""])
-	Tmin = core.std.Expr([limitclp,f1c,b1c],["x y min z min"] if chroma or GRAYS else ["x y min z min",""])
+	f1c = core.mv.Compensate(limitclp, rMVS, f1v, thsad=thSAD, thscd1=thSCD1, thscd2=thSCD2)
+	b1c = core.mv.Compensate(limitclp, rMVS, b1v, thsad=thSAD, thscd1=thSCD1, thscd2=thSCD2)
+	Tmax = core.std.Expr([limitclp, f1c, b1c], ["x y max z max"] if chroma or GRAYS else ["x y max z max", ""])
+	Tmin = core.std.Expr([limitclp, f1c, b1c], ["x y min z min"] if chroma or GRAYS else ["x y min z min", ""])
 	if Tlimit:
-		sclp = clamp(sclp,Tmax,Tmin,Tovershoot,Tundershoot,[0,1,2] if chroma else [0])
+		sclp = clamp(sclp, Tmax, Tmin, Tovershoot, Tundershoot, [0, 1, 2] if chroma else [0])
 
 	# merge with edge mask and output correct chroma
 	if mergesrc:
@@ -1212,21 +1211,22 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
 			end = sclp
 		else:
 			if ssout:
-				end = core.std.ShufflePlanes([sclp,U,V],[0,0,0],vs.YUV) if not chroma and not sGRAY else sclp
+				end = core.std.ShufflePlanes([sclp, U, V], [0, 0, 0], vs.YUV) if not chroma and not sGRAY else sclp
 			else:
-				end = core.std.ShufflePlanes([sclp,U,V],[0,0,0],vs.YUV) if not chroma and not sGRAY else sclp
+				end = core.std.ShufflePlanes([sclp, U, V], [0, 0, 0], vs.YUV) if not chroma and not sGRAY else sclp
 	elif edgemode == 1:
 		if ssout:
-			end = core.std.MaskedMerge(merged_ss, sclp, edgemask, planes= [0,1,2] if chroma else [0], first_plane=True)
-			end = core.std.ShufflePlanes([end,U,V],[0,0,0],vs.YUV) if not chroma and not sGRAY else end
+			end = core.std.MaskedMerge(merged_ss, sclp, edgemask, planes=[0, 1, 2] if chroma else [0], first_plane=True)
+			end = core.std.ShufflePlanes([end, U, V], [0, 0, 0], vs.YUV) if not chroma and not sGRAY else end
 		else:
-			end = core.std.MaskedMerge(merged_os, sclp, edgemask, planes= [0,1,2] if chroma else [0], first_plane=True)
-			end = core.std.ShufflePlanes([end,U,V],[0,0,0],vs.YUV) if not chroma and not sGRAY else end
+			end = core.std.MaskedMerge(merged_os, sclp, edgemask, planes=[0, 1, 2] if chroma else [0], first_plane=True)
+			end = core.std.ShufflePlanes([end, U, V], [0, 0, 0], vs.YUV) if not chroma and not sGRAY else end
 	else:
 		if ssout:
-			end = core.std.MaskedMerge(sclp, merged_ss, edgemask, planes= [0,1,2] if chroma else [0], first_plane=True)
-			end = core.std.ShufflePlanes([end,U,V],[0,0,0],vs.YUV) if not chroma and not sGRAY else end
+			end = core.std.MaskedMerge(sclp, merged_ss, edgemask, planes=[0, 1, 2] if chroma else [0], first_plane=True)
+			end = core.std.ShufflePlanes([end, U, V], [0, 0, 0], vs.YUV) if not chroma and not sGRAY else end
 		else:
-			end = core.std.MaskedMerge(sclp, merged_os, edgemask, planes= [0,1,2] if chroma else [0], first_plane=True)
-			end = core.std.ShufflePlanes([end,U,V],[0,0,0],vs.YUV) if not chroma and not sGRAY else end
+			end = core.std.MaskedMerge(sclp, merged_os, edgemask, planes=[0, 1, 2] if chroma else [0], first_plane=True)
+			end = core.std.ShufflePlanes([end, U, V], [0, 0, 0], vs.YUV) if not chroma and not sGRAY else end
+	
 	return end if not showmask else edgemask
