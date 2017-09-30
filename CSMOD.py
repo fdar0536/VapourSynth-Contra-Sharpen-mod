@@ -826,7 +826,7 @@ def CSMOD(filtered, source=None, pclip=None, chroma=None, preset=None, edgemode=
         elif edgemask == -2:
             edgemask = core.std.Convolution(prefinal8, [0, 0, 0, 0, 2, -1, 0, -1, 0], planes=0)
             mt = "x 4 > 255 x ?"
-            edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt,""])
+            edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
             edgemask = core.std.Inflate(edgemask, planes=0)
         # -3: Same as mtype=3 in TAA(prewitt)
         elif edgemask == -3:
