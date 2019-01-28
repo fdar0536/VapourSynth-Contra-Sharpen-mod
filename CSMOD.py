@@ -153,7 +153,7 @@ def CSMOD(filtered, **args):
         sGRAY = False
 
     showmask = args.get('showmask', False)
-    
+
     # define CALL , custom yourself
     def CALL(func, clip):
         return func(clip)
@@ -308,12 +308,12 @@ def CSMOD(filtered, **args):
 
         searchparam = args.get('searchparam', [1, 2, 2, 2, 2, 2, 2, 2, 2, 2][pnum[preset]])
 
-        blksize = args.get('blksize', [bs2,  bs2,  bs2,   bs2,    bs,    bs,    bs,    bs,    bs,    bs][pnum[preset]])
+        blksize = args.get('blksize', [bs2, bs2, bs2, bs2, bs, bs, bs, bs, bs, bs][pnum[preset]])
 
         ol = round(blksize / 2)
         ol2 = round(blksize / 4)
 
-        overlap = args.get('overlap', [ol2,  ol2,  ol2,   ol2,    ol,    ol,    ol,    ol,    ol,    ol][pnum[preset]])
+        overlap = args.get('overlap', [ol2, ol2, ol2, ol2, ol, ol, ol, ol, ol, ol][pnum[preset]])
     except KeyError:
         raise TypeError('CSMOD: \"preset\" is invalid !')
     
@@ -539,18 +539,18 @@ def CSMOD(filtered, **args):
     if not isinstance(nr, bool):
         raise TypeError('CSMOD: \"nr\" must be bool !')
 
-    # Avisynth Function: Spline    
+    # Avisynth Function: Spline
     def Spline(x, x1, y1, x2, y2, x3, y3, cubic=True):
         n = 3
         xa = [0.0, x1, x2, x3]
         ya = [0.0, y1, y2, y3]
         y2a = [0.0, 0.0, 0.0, 0.0]
         y = 0
-        
+
         def spline(x, y, n, y2):
             u = [0.0, 0.0, 0.0]
             y2[1] = u[1] = float(0)
-            
+
             idx = 2
             sig = (x[idx] - x[idx-1]) / (x[idx+1] - x[idx-1])
             p = sig * y2[idx-1] + float(2)
@@ -558,18 +558,18 @@ def CSMOD(filtered, **args):
             u[idx] = (y[idx+1] - y[idx]) / (x[idx+1] - x[idx]) - (y[idx] - y[idx-1]) / (x[idx] - x[idx-1])
             u[idx] = (float(6) * u[idx] / (x[idx+1] - x[idx-1]) - sig * u[idx-1]) / p
             idx = idx + 1
-            
+
             un = float(0)
             qn = float(0)
-            
+
             y2[n] = (un - qn * u[n-1]) / (qn * y2[n-1] + float(1))
-            
+
             for i in range(2):
                 idx = 2
                 y2[idx] = y2[idx] * y2[idx+1] + u[idx]
                 idx = idx - 1
             return None
-            
+
         def splint(xa, ya, y2a, n, x, y, cubic):
             klo = 1
             khi = n
@@ -579,20 +579,20 @@ def CSMOD(filtered, **args):
                     khi = k
                 else:
                     klo = k
-                    
+
             h = xa[khi] - xa[klo]
-                
+
             a = (xa[khi] - x) / h
             b = (x - xa[klo]) / h
-            
+
             if cubic:
                 y = a * ya[klo] + b * ya[khi] + (( a * a * a - a) * y2a[klo] + (b * b * b - b) * y2a[khi]) * (h * h) / float(6)
             else:
                 y = a * ya[klo] + b * ya[khi]
             return y
-        
+
         spline(xa, ya, n, y2a)
-        
+
         return splint(xa, ya, y2a, n, x, y, cubic)
         
     # Internal Function
@@ -602,8 +602,7 @@ def CSMOD(filtered, **args):
             return input
         else:
             return core.fmtc.bitdepth(input, bits=depth, flt=0, dmode=3)
-        
-    
+
     # Internal Function: SuperSample
     def CSmod_nrSpline64Resize(input, target_width=None, target_height=None, chroma=None, nr=nr, ss_wf=ss_w, ss_hf=ss_h):
         w = input.width
