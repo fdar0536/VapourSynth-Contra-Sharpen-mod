@@ -746,7 +746,7 @@ def CSMOD(filtered, **args):
         pre = pclip
     elif preblur <= -7:
         pre = core.rgvs.RemoveGrain(fforpre, [19] if (chroma and prec) or GRAYS else [19, 0])
-        pre = coer.rgvs.RemoveGrain(pre, [4] if (chroma and prec) or GRAYS else [4, 0])
+        pre = core.rgvs.RemoveGrain(pre, [4] if (chroma and prec) or GRAYS else [4, 0])
     elif preblur == -6:
         pre = core.rgvs.RemoveGrain(fforpre, [4] if (chroma and prec) or GRAYS else [4, 0])
         pre = core.rgvs.RemoveGrain(pre, [11] if (chroma and prec) or GRAYS else [11, 0])
