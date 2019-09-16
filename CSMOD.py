@@ -1,6 +1,7 @@
 import math
 import vapoursynth as vs
 import havsfunc as haf
+import functools
 
 def CSMOD(filtered, **args):
     """
@@ -127,6 +128,8 @@ def CSMOD(filtered, **args):
         searchparam=None
         MVsharp=2
         DCT=0
+        opencl=True
+        device=-1
         """
 
     core = vs.core
@@ -539,6 +542,18 @@ def CSMOD(filtered, **args):
     if not isinstance(nr, bool):
         raise TypeError('CSMOD: \"nr\" must be bool !')
 
+    # tcanny
+    tcanny = None
+    opencl = args.get('opencl', True)
+    device = args.get("device", -1)
+    if (opencl):
+        try:
+            tcanny = functools.partial(core.tcanny.TCannyCL, device=device)
+        except AttributeError:
+            tcanny = core.tcanny.TCanny
+    else:
+        tcanny = core.tcanny.TCanny
+
     # Avisynth Function: Spline
     def Spline(x, x1, y1, x2, y2, x3, y3, cubic=True):
         n = 3
@@ -657,12 +672,28 @@ def CSMOD(filtered, **args):
         hss = round(input.height * ss_hf / 8) * 8
         # nothing to say..
         def SS(src):
+            nnedi3 = None
+            if (opencl):
+                try:
+                    nnedi3 = functools.partial(core.nnedi3cl.NNEDI3CL,\
+                                               device=device)
+                except AttributeError:
+                    try:
+                        nnedi3 = core.znedi3.nnedi3
+                    except AttributeError:
+                        nnedi3 = core.nnedi3.nnedi3
+            else:
+                try:
+                    nnedi3 = core.znedi3.nnedi3
+                except AttributeError:
+                    nnedi3 = core.nnedi3.nnedi3
             
             if ss_hq != 1:
                 src = Depth(src, 8)
-                ss = core.nnedi3.nnedi3(src, qual=2, nsize=0, nns=3, pscrn=2 if ss_hq==0 else ss_hq, field=1, dh=True)
+                ss = nnedi3(src, qual=2, nsize=0, nns=3, pscrn=2 if ss_hq==0 else ss_hq, field=1, dh=True)
             else:
-                ss = core.nnedi3.nnedi3(src, qual=2, field=1, dh=True, pscrn=1)
+                ss = nnedi3(src, qual=2, field=1, dh=True, pscrn=1)
+            
             fix = core.fmtc.resample(ss, sy=[-0.5, -0.5*(1<<ss.format.subsampling_h)], kernel="spline64")
             
             return fix
@@ -854,7 +885,7 @@ def CSMOD(filtered, **args):
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
         # -5: Same as mtype=5 in TAA(tcanny)
         elif edgemask == -5:
-            edgemask = core.tcanny.TCanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
+            edgemask = tcanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
             mt = "x " + str(edgethr) + " <= x 2 / x 2 * ?"
             edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
@@ -865,7 +896,7 @@ def CSMOD(filtered, **args):
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11,0])
         # -7: My own method of tcanny usage of AA mask
         elif edgemask <= -7:
-            edgemask = core.tcanny.TCanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
+            edgemask = tcanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
             mt = "x " + str(edgethr) + " <= 0 x " + str(edgethr) + " - 64 * ?"
             edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
@@ -907,7 +938,7 @@ def CSMOD(filtered, **args):
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
         # 5: tcanny mask(less sensitive to noise)
         elif edgemask == 5:
-            edgemask = core.tcanny.TCanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
+            edgemask = tcanny(srcfinal8, sigma=tcannysigma, mode=1, planes=0)
             mt = "x " + str(edgethr * 0.5) + " <= 0 x " + str(edgethr * 0.5) + " - 2.4 pow ?"
             edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
             edgemask = core.rgvs.RemoveGrain(edgemask, [20 if HD else 11] if GRAYS else [20 if HD else 11, 0])
