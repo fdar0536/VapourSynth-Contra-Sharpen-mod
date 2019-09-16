@@ -8,7 +8,7 @@ def CSMOD(filtered, **args):
         2016.01.27 by Evalyn, Thanks [author]mawen1250 and [sis]Holy !
 
         Requirements: VapourSynth R28, havsfunc r20 or newer, MSmoosh,
-        fluxsmooth, MVtools, nnedi3, TemporalSoften
+        fluxsmooth, MVtools, nnedi3, TemporalSoften, tedgemask
 
         Test on YV12/YV24(8~16bit INT) passed, and Greyscale now is supported.
         Other YUV colorfamily havn't been fully tested yet.
@@ -847,7 +847,7 @@ def CSMOD(filtered, **args):
             edgemask = core.rgvs.RemoveGrain(edgemask, [20] if GRAYS else [20, 0])
         # -4: Same as mtype=4 in TAA(TEdgeMask)
         elif edgemask == -4:
-            edgemask = core.generic.TEdge(prefinal8, planes=0)
+            edgemask = core.tedgemask.TEdgeMask(prefinal8, planes=0)
             mt = "x " + str(edgethr * 3.0) + " <= x 2 / x 16 * ?"
             edgemask = core.std.Expr(edgemask, [mt] if GRAYS else [mt, ""])
             edgemask = core.std.Deflate(edgemask, planes=0)
