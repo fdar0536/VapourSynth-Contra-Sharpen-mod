@@ -343,7 +343,7 @@ def CSMOD(filtered, **args):
     # It will automatically set [edgemask=-2, ss_w=1, ss_h=1, preblur=0, kernel=5, Slimit=false, Tlimit=true(when limit=false)].
 
     # edgemask
-    if not (isinstance(edgemask, int) or isinstance(edgemask, vs.VideoNode)):
+    if not isinstance(edgemask, (int, vs.VideoNode)):
         raise TypeError('CSMOD: \"edgemask\" must be int or clip !')
     #  1: Same as edgemaskHQ=False in LSFmod(min/max), 2: Same as edgemaskHQ=True in LSFmod,
     #  3: Same as sharpening mask in MCTD(prewitt),    4: MSharpen mask,
@@ -355,12 +355,12 @@ def CSMOD(filtered, **args):
     # 1~6 are masks tweaked for Sharpening, -1~-7 are masks tweaked for AA.
     # Otherwise define a custom edge mask clip, only luma is taken to merge all planes.
 
-    if not (isinstance(edgethr, float) or isinstance(edgethr, int)):
+    if not isinstance(edgethr, (float, int)):
         raise TypeError('CSMOD: \"edgethr\" must be float !')
     # Tweak edge mask threshold EXCEPT edgemask mode -2/-1.
 
     tcannysigma = args.get('tcannysigma', 1.2)
-    if not (isinstance(tcannysigma, float) or isinstance(tcannysigma, int)):
+    if not isinstance(tcannysigma, (float, int)):
         raise TypeError('CSMOD: \"tcannysigma\" must be float !')
     #Tweak tcanny's sigma in edgemask mode -7/-5/5.
 
@@ -369,13 +369,13 @@ def CSMOD(filtered, **args):
         raise TypeError('CSMOD: \"mergesrc\" must be bool !')
     #Whether to merge clip "source" instead of clip "filtered" at the end of processing.
 
-    if not (isinstance(ss_w, float) or isinstance(ss_w, int)):
+    if not isinstance(ss_w, (float, int)):
         raise TypeError('CSMOD: \"ss_w\" must be float !')
     elif ss_w < 1.00:
         ss_w = 1.00
     #Super sampling multiplier of width.
 
-    if not (isinstance(ss_h, float) or isinstance(ss_h, int)):
+    if not isinstance(ss_h, (float, int)):
         raise TypeError('CSMOD: \"ss_w\" must be float !')
     elif ss_h < 1.00:
         ss_h = 1.00
@@ -461,13 +461,13 @@ def CSMOD(filtered, **args):
     # 7: for grain enhance(RG19+RG4),       8: for noise enhance(MinBlur radius=1)
     # Otherwise define a custom kernel in string such as kernel="removegrain(20, 11)".
 
-    if not (isinstance(secure, int) or isinstance(secure, float)):
+    if not isinstance(secure, (float, int)):
         raise TypeError('CSMOD: \"secure\" must be float !')
     elif secure < 0 or secure > 255:
         raise ValueError('CSMOD: \"secure\" must be non-negative float[0~255] !')
     # Threshold(on an 8-bit scale) to avoid banding & oil painting (or face wax) effect of sharpening, set 0 to disable it.(from LSFmod)
 
-    if not (isinstance(Smode, int) or isinstance(Smode, str)):
+    if not isinstance(Smode, (int, str)):
         raise TypeError('CSMOD: \"Smode\" must be int or string !')
     elif isinstance(Smode, int) and (Smode < 0 or Smode > 3):
         raise ValueError('CSMOD: \"Smode\" is out of range [int(0~3)] !')
@@ -634,7 +634,7 @@ def CSMOD(filtered, **args):
 
         res_mul = float(target_width * target_height) / float(w * h)
         res_mul = min(max(res_mul, 1), 2.25)
-        if not (isinstance(nr, float) or isinstance(nr, int)):
+        if not isinstance(nr, (float, int)):
             if nr:
                 nr_weight = Spline(res_mul, 1, 0, 2.25, 1, 3.5, 0, True)
             else:
