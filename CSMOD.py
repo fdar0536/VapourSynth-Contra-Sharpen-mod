@@ -136,7 +136,7 @@ def CSMOD(filtered, **args):
     # format check
     sColorFamily = filtered.format.color_family
     sSType = filtered.format.sample_type
-    if sColorFamily == vs.YUV or sColorFamily == vs.GRAY:
+    if sColorFamily in [vs.YUV, vs.GRAY]:
         if sSType != vs.INTEGER:
             raise TypeError('CSMOD: \"filtered\" must be INTEGER format !')
     else:
